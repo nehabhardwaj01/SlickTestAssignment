@@ -1,6 +1,6 @@
 package com.example
 
-case class Dependent(depId : Int,name : String,dependentOn : Int,relation : String,age :Option[Int] )
+  case class Dependent(depId : Int,name : String,dependentOn : Int,relation : String,age :Option[Int] )
 
 
 trait DependentTable extends EmployeeTable{
