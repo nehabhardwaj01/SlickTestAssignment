@@ -1,13 +1,11 @@
 package com.example
 
-import slick.jdbc.PostgresProfile.api._
-import Binding.db
-
-
 case class Project(pId : Int,empId : Int,name : String,members : Int,lead :String)
 
 
 trait ProjectTable extends EmployeeTable{
+  this:DbProvider =>
+  import driver.api._
 
 
   private[example] class ProjectTable(tag  :Tag) extends Table[Project](tag,"projects"){
@@ -26,6 +24,8 @@ trait ProjectTable extends EmployeeTable{
 }
 
 trait ProjectComponent extends ProjectTable {
+  this:DbProvider =>
+  import driver.api._
 
   def create = db.run(projectTableQuery.schema.create)
 
@@ -53,6 +53,6 @@ trait ProjectComponent extends ProjectTable {
   }
 }
 
-object ProjectRepo extends ProjectComponent{
+object ProjectComponent extends ProjectComponent with MySqlDBProvider{
 
 }

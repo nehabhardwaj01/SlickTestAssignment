@@ -1,14 +1,12 @@
 package com.example
 
-import slick.jdbc.PostgresProfile.api._
-import scala.concurrent.ExecutionContext.Implicits.global
-import Binding.db
-
-
 
 case class Employee(empId : Int,name : String,experience : Double)
 
 trait EmployeeTable{
+  this:DbProvider =>
+  import driver.api._
+
 
   private[example] class EmployeeTable(tag  :Tag) extends Table[Employee](tag,"employee"){
     val empId = column[Int]("emp_id",O.PrimaryKey)
@@ -22,6 +20,9 @@ trait EmployeeTable{
 }
 
 trait EmployeeComponent extends EmployeeTable{
+
+  this:DbProvider =>
+  import driver.api._
 
   def create = db.run(queryObj.schema.create)
 
@@ -49,6 +50,6 @@ trait EmployeeComponent extends EmployeeTable{
   }
 }
 
-object EmployeeRepo extends EmployeeComponent{
+object EmployeeComponent extends EmployeeComponent with MySqlDBProvider{
 
 }

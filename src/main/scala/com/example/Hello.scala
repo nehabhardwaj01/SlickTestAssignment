@@ -3,12 +3,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Hello extends App {
 
+
 /*
 initialize all the databases.
  */
-  EmployeeRepo.create
-  DependentRepo.create
-  ProjectRepo.create
+  DependentComponent.create
+  EmployeeComponent.create
+  ProjectComponent.create
+Thread.sleep(2000)
 
 /*
 Insert values in databases.
@@ -21,8 +23,9 @@ Insert values in databases.
     Employee(5,"no One",6.00)
   )
 
+
   for(l <- listOfEmployees){
-    val result = EmployeeRepo.insert(l)
+    val result = EmployeeComponent.insert(l)
     val res = result.map(res => s"$res row inserted").recover {
       case ex : Throwable => ex.getMessage
     }
@@ -39,7 +42,7 @@ Insert values in databases.
   )
 
   for(l <- listOfProjects){
-    val result = ProjectRepo.insert(l)
+    val result = ProjectComponent.insert(l)
     val res = result.map(res => s"$res row inserted").recover {
       case ex : Throwable => ex.getMessage
     }
@@ -54,8 +57,8 @@ Insert values in databases.
     Dependent(5,"zeba",7,"junior",Some(23))
   )
 
-  for(l <- listOfEmployees){
-    val result = EmployeeRepo.insert(l)
+  for(l  <- listOfDependents){
+    val result = DependentComponent.insert(l)
     val res = result.map(res => s"$res row inserted").recover {
       case ex : Throwable => ex.getMessage
     }
@@ -65,22 +68,22 @@ Insert values in databases.
   /*
   Print all the values in the database
    */
-  val getallEmployee = EmployeeRepo.getall().map(res => s"$res \n").recover{
+  val getallEmployee = EmployeeComponent.getall().map(res => s"$res \n").recover{
     case ex : Throwable => ex.getMessage
   }
   getallEmployee.map(println(_))
 
-  val getallProjects = ProjectRepo.getall().map(res => s"$res \n").recover{
+  val getallProjects = ProjectComponent.getall().map(res => s"$res \n").recover{
     case ex : Throwable => ex.getMessage
   }
   getallProjects.map(println(_))
 
 
-  val getallDependent = DependentRepo.getall().map(res => s"$res \n").recover{
+  val getallDependent = DependentComponent.getall().map(res => s"$res \n").recover{
     case ex : Throwable => ex.getMessage
   }
   getallDependent.map(println(_))
 
 
-  Thread.sleep(10000)
+  Thread.sleep(1000)
 }

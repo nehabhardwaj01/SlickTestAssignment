@@ -1,8 +1,33 @@
 package com.example
 
-import slick.jdbc.PostgresProfile.api._
+import slick.jdbc.{PostgresProfile, JdbcProfile, MySQLProfile}
 
-object Binding {
+trait DbProvider {
+
+  val driver:JdbcProfile
+
+  import driver.api._
+
+  val db:Database
+
+}
+
+trait PostGresDBProvider extends DbProvider{
+
+  val driver = PostgresProfile
+
+  import driver.api._
+
   val db = Database.forConfig("myPostgresDB")
-  val db1 = Database.forConfig("mySqlDB")
+
+}
+
+trait MySqlDBProvider extends DbProvider{
+
+  val driver = MySQLProfile
+
+  import driver.api._
+
+  val db = Database.forConfig("mySqlDB")
+
 }

@@ -1,13 +1,12 @@
 package com.example
 
-import slick.jdbc.PostgresProfile.api._
-import scala.concurrent.ExecutionContext.Implicits.global
-import Binding.db
-
 case class Dependent(depId : Int,name : String,dependentOn : Int,relation : String,age :Option[Int] )
 
 
 trait DependentTable extends EmployeeTable{
+
+  this:DbProvider =>
+  import driver.api._
 
   private[example] class DependentTable(tag  :Tag) extends Table[Dependent](tag,"employee_dependent"){
     val depId = column[Int]("dep_id",O.PrimaryKey)
@@ -27,12 +26,14 @@ trait DependentTable extends EmployeeTable{
 
 
 trait DependentComponent extends DependentTable{
+  this:DbProvider =>
+  import driver.api._
 
   def create = db.run(dependentTableQuery.schema.create)
 
-  def insert(dependent :Dependent) = {
-      db.run(dependentTableQuery += dependent)
-  }
+  def insert(dependent :Dependent) = db.run{
+        dependentTableQuery += dependent
+      }
 
   def deleteByAge(age : Int) ={
     val query= dependentTableQuery.filter(x => x.age < 16)
@@ -52,7 +53,7 @@ trait DependentComponent extends DependentTable{
   }
 
   def getall() ={
-    db.run(dependentTableQuery.result)
+    db.run(dependentTableQuery.to[List].result)
   }
 
   def insertOrUpdate(dep : Dependent) = {
@@ -61,6 +62,6 @@ trait DependentComponent extends DependentTable{
 
 }
 
-object DependentRepo extends DependentComponent{
+object DependentComponent extends DependentComponent with MySqlDBProvider{
 
 }
