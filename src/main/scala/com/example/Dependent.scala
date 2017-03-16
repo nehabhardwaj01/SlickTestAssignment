@@ -15,7 +15,7 @@ trait DependentTable extends EmployeeTable{
     val relation = column[String]("relation")
     val age = column[Option[Int]]("age")
 
-    def employeeDepdndentFK = foreignKey("employee_dependent_fk",dependentOn,queryObj)(_.empId)
+    def employeeDepdndentFK = foreignKey("employee_dependent_fk",dependentOn,employeeTableQuery)(_.empId)
 
     def * = (depId,name,dependentOn,relation,age) <>(Dependent.tupled,Dependent.unapply)
   }
@@ -29,7 +29,11 @@ trait DependentComponent extends DependentTable{
   this:DbProvider =>
   import driver.api._
 
-  def create = db.run(dependentTableQuery.schema.create)
+  def create = {
+    db.run(dependentTableQuery.schema.create)
+    dependentTableQuery.schema.createStatements.foreach(println)
+
+  }
 
   def insert(dependent :Dependent) = db.run{
         dependentTableQuery += dependent
@@ -58,6 +62,11 @@ trait DependentComponent extends DependentTable{
 
   def insertOrUpdate(dep : Dependent) = {
     db.run(dependentTableQuery.insertOrUpdate(dep))
+  }
+
+  def drop = {
+    db.run(dependentTableQuery.schema.drop)
+    dependentTableQuery.schema.drop.statements.foreach(println)
   }
 
 }

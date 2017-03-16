@@ -15,7 +15,7 @@ trait ProjectTable extends EmployeeTable{
     val members = column[Int]("team_members")
     val lead = column[String]("lead")
 
-    def employeeProjectFK = foreignKey("employee_project_fk",empId,queryObj)(_.empId)
+    def employeeProjectFK = foreignKey("employee_project_fk",empId,employeeTableQuery)(_.empId)
 
     def * = (pId,empId,name,members,lead) <>(Project.tupled,Project.unapply)
   }
@@ -27,7 +27,10 @@ trait ProjectComponent extends ProjectTable {
   this:DbProvider =>
   import driver.api._
 
-  def create = db.run(projectTableQuery.schema.create)
+  def create = {
+    db.run(projectTableQuery.schema.create)
+    projectTableQuery.schema.createStatements.foreach(println)
+  }
 
   def insert(prj :Project) = db.run(
     projectTableQuery += prj
@@ -50,6 +53,11 @@ trait ProjectComponent extends ProjectTable {
 
   def insertOrUpdate(prj : Project) = {
     db.run(projectTableQuery.insertOrUpdate(prj))
+  }
+
+  def drop = {
+    db.run(projectTableQuery.schema.truncate)
+    projectTableQuery.schema.truncate.statements.foreach(println)
   }
 }
 
