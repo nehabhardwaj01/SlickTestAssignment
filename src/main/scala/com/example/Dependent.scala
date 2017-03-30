@@ -32,7 +32,6 @@ trait DependentComponent extends DependentTable{
   def create = {
     db.run(dependentTableQuery.schema.create)
     dependentTableQuery.schema.createStatements.foreach(println)
-
   }
 
   def insert(dependent :Dependent) = db.run{

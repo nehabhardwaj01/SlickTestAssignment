@@ -1,13 +1,11 @@
 package com.example
 
-
 case class Employee(empId : Int,name : String,experience : Double)
 
 trait EmployeeTable {
   this: DbProvider =>
 
   import driver.api._
-
 
   private[example] class EmployeeTable(tag: Tag) extends Table[Employee](tag, "employee") {
     val empId = column[Int]("emp_id", O.PrimaryKey)
@@ -20,9 +18,10 @@ trait EmployeeTable {
   val employeeTableQuery = TableQuery[EmployeeTable]
 }
 
-trait EmployeeComponent extends EmployeeTable{
+trait EmployeeComponent extends EmployeeTable {
 
-  this:DbProvider =>
+  this: DbProvider =>
+
   import driver.api._
 
   def create = {
@@ -30,26 +29,26 @@ trait EmployeeComponent extends EmployeeTable{
     employeeTableQuery.schema.createStatements.foreach(println)
   }
 
-  def insert(emp :Employee) = {
+  def insert(emp: Employee) = {
     db.run(employeeTableQuery += emp)
   }
 
-  def delete(exp : Double) ={
-    val query= employeeTableQuery.filter(x => x.experience < 4.00)
+  def delete(exp: Double) = {
+    val query = employeeTableQuery.filter(x => x.experience === exp)
     val action = query.delete
     db.run(action)
   }
 
-  def update(id:Int,name : String) ={
+  def update(id: Int, name: String) = {
     val query = employeeTableQuery.filter(_.empId === id).map(_.name).update(name)
     db.run(query)
   }
 
-  def getall() ={
+  def getall() = {
     db.run(employeeTableQuery.result)
   }
 
-  def insertOrUpdate(emp : Employee) = {
+  def insertOrUpdate(emp: Employee) = {
     db.run(employeeTableQuery.insertOrUpdate(emp))
   }
 
@@ -64,5 +63,4 @@ trait EmployeeComponent extends EmployeeTable{
 }
 
 object EmployeeComponent extends EmployeeComponent with MySqlDBProvider{
-
 }
